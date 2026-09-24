@@ -1,0 +1,92 @@
+[
+  {
+    "id": "dev-01",
+    "categoria": "reso",
+    "numero_ordine": "ORD-52870",
+    "nota": ""
+  },
+  {
+    "id": "dev-02",
+    "categoria": "reso",
+    "numero_ordine": "ORD-73105",
+    "nota": "Caso al limite con la garanzia: il prodotto è danneggiato, ma la richiesta esplicita è il rimborso."
+  },
+  {
+    "id": "dev-03",
+    "categoria": "reso",
+    "numero_ordine": "ORD-61742",
+    "nota": "Richiesta di cambio per misura; il numero d'ordine è scritto senza trattino."
+  },
+  {
+    "id": "dev-04",
+    "categoria": "garanzia",
+    "numero_ordine": "ORD-60419",
+    "nota": "Chiede riparazione o sostituzione dopo l'uso senza usare le parole \"garanzia\", \"difetto\" o \"rotto\"."
+  },
+  {
+    "id": "dev-05",
+    "categoria": "garanzia",
+    "numero_ordine": null,
+    "nota": "Chiede una sostituzione per un problema insorto durante l'uso; 583921 è un codice di sei cifre e non è un numero d'ordine valido."
+  },
+  {
+    "id": "dev-06",
+    "categoria": "garanzia",
+    "numero_ordine": null,
+    "nota": "Ci sono due richieste, ma il motivo principale dell'email è risolvere il problema degli occhiali; la domanda sulla spedizione è secondaria."
+  },
+  {
+    "id": "dev-07",
+    "categoria": "stato_ordine",
+    "numero_ordine": "ORD-91827",
+    "nota": ""
+  },
+  {
+    "id": "dev-08",
+    "categoria": "stato_ordine",
+    "numero_ordine": null,
+    "nota": "Chiede informazioni sulla consegna; la sequenza di numeri è un telefono e non un numero d'ordine."
+  },
+  {
+    "id": "dev-09",
+    "categoria": "stato_ordine",
+    "numero_ordine": null,
+    "nota": "Messaggio breve e arrabbiato; 1234 ha solo quattro cifre, quindi non è un numero d'ordine valido."
+  },
+  {
+    "id": "dev-10",
+    "categoria": "info_prodotto",
+    "numero_ordine": null,
+    "nota": ""
+  },
+  {
+    "id": "dev-11",
+    "categoria": "info_prodotto",
+    "numero_ordine": null,
+    "nota": "Domande pre-acquisto su materiale e disponibilità."
+  },
+  {
+    "id": "dev-12",
+    "categoria": "info_prodotto",
+    "numero_ordine": null,
+    "nota": "Una sola riga e registro informale, ma è chiaramente una domanda pre-acquisto sulla compatibilità."
+  },
+  {
+    "id": "dev-13",
+    "categoria": "altro",
+    "numero_ordine": null,
+    "nota": "Messaggio senza una richiesta."
+  },
+  {
+    "id": "dev-14",
+    "categoria": "altro",
+    "numero_ordine": null,
+    "nota": "Proposta commerciale, non richiesta relativa a ordine, prodotto o assistenza."
+  },
+  {
+    "id": "dev-15",
+    "categoria": "altro",
+    "numero_ordine": null,
+    "nota": "La richiesta principale riguarda privacy e dati personali; 39456 è un codice promozionale di cinque cifre e non va interpretato come numero d'ordine."
+  }
+]
