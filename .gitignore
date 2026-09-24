@@ -1,0 +1,25 @@
+# ---- always: secrets --------------------------------------------------
+# Real values live in .env, never committed; .env.example carries the
+# placeholders instead.
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# ---- always: OS, editors, AI assistants -------------------------------
+.DS_Store
+._*
+.vscode/
+.idea/
+*.swp
+*~
+.claude/
+CLAUDE.md
+
+# ---- Node / TypeScript (keep only if the project uses it) --------------
+node_modules/
+dist/
+*.tsbuildinfo
+npm-debug.log*
