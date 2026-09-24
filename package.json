@@ -1,0 +1,20 @@
+{
+  "name": "email-triage",
+  "version": "1.0.0",
+  "description": "Rules vs a local LLM vs a cloud LLM on customer email triage, measured on a held-out test set.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=23.6"
+  },
+  "scripts": {
+    "evaluate": "node --env-file-if-exists=.env src/evaluate.ts data/test",
+    "evaluate:dev": "node --env-file-if-exists=.env src/evaluate.ts data/dev",
+    "check": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "typescript": "^7.0.2"
+  }
+}
