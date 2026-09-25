@@ -10,13 +10,27 @@ export type Triage = {
 
 const ORDER_NUMBER_FORMAT = /^ORD-\d{5}$/;
 
-// Checks at runtime that a value parsed from JSON has the shape of a Triage.
-// The same check guards labels.json and the answers of the language models.
-export function isTriage(value: unknown): value is Triage {
-  if (typeof value !== "object" || value === null) return false;
-  if (!("categoria" in value) || !("numero_ordine" in value)) return false;
+// Checks at runtime that a value parsed from JSON has the shape of a Triage,
+// and says what is wrong with it, or null if nothing is. The messages are in
+// Italian because they are sent back to the model when it gets the format wrong.
+export function findTriageProblem(value: unknown): string | null {
+  if (typeof value !== "object" || value === null) return "la risposta non è un oggetto JSON";
+  if (!("categoria" in value) || !("numero_ordine" in value)) {
+    return "mancano i campi categoria o numero_ordine";
+  }
   const { categoria, numero_ordine } = value;
-  if (!CATEGORIES.some((category) => category === categoria)) return false;
-  if (numero_ordine === null) return true; // no order number in the email
-  return typeof numero_ordine === "string" && ORDER_NUMBER_FORMAT.test(numero_ordine);
+  if (!CATEGORIES.some((category) => category === categoria)) {
+    return `la categoria "${categoria}" non è fra quelle ammesse`;
+  }
+  if (numero_ordine === null) return null; // no order number in the email
+  if (typeof numero_ordine !== "string" || !ORDER_NUMBER_FORMAT.test(numero_ordine)) {
+    return `numero_ordine "${numero_ordine}" non è "ORD-" seguito da 5 cifre, né null`;
+  }
+  return null;
+}
+
+// The same check as a type guard: labels.json and the answers of the language
+// models both go through it.
+export function isTriage(value: unknown): value is Triage {
+  return findTriageProblem(value) === null;
 }
