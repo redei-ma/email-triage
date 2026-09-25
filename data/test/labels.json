@@ -1,0 +1,152 @@
+[
+  {
+    "id": "test-01",
+    "categoria": "reso",
+    "numero_ordine": "ORD-73164",
+    "nota": ""
+  },
+  {
+    "id": "test-02",
+    "categoria": "reso",
+    "numero_ordine": "ORD-25891",
+    "nota": ""
+  },
+  {
+    "id": "test-03",
+    "categoria": "reso",
+    "numero_ordine": "ORD-60437",
+    "nota": "È un caso al limite con un prodotto arrivato danneggiato, ma la richiesta principale è esplicitamente il rimborso."
+  },
+  {
+    "id": "test-04",
+    "categoria": "reso",
+    "numero_ordine": "ORD-12376",
+    "nota": "Il numero d'ordine è scritto senza trattino e va normalizzato."
+  },
+  {
+    "id": "test-05",
+    "categoria": "reso",
+    "numero_ordine": null,
+    "nota": "La richiesta è chiaramente un reso, ma il numero contiene solo 4 cifre."
+  },
+  {
+    "id": "test-06",
+    "categoria": "garanzia",
+    "numero_ordine": "ORD-51928",
+    "nota": "Non usa le parole 'garanzia', 'difetto' o 'rotto': il problema emerge dalla descrizione del deterioramento dopo l'uso e chiede una sostituzione."
+  },
+  {
+    "id": "test-07",
+    "categoria": "garanzia",
+    "numero_ordine": "ORD-97351",
+    "nota": "Descrive una rottura dopo l'uso senza usare la parola 'rotto' e chiede una riparazione."
+  },
+  {
+    "id": "test-08",
+    "categoria": "garanzia",
+    "numero_ordine": "ORD-42107",
+    "nota": "È un problema comparso dopo l'uso; la richiesta di sostituzione prevale sul semplice reso."
+  },
+  {
+    "id": "test-09",
+    "categoria": "garanzia",
+    "numero_ordine": "ORD-68032",
+    "nota": "Il tono è arrabbiato e non compare la parola 'garanzia'; la richiesta concreta è una riparazione per un problema comparso dopo l'uso."
+  },
+  {
+    "id": "test-10",
+    "categoria": "garanzia",
+    "numero_ordine": null,
+    "nota": "La richiesta è una sostituzione per un problema emerso durante l'uso, ma il numero d'ordine ha solo 4 cifre."
+  },
+  {
+    "id": "test-11",
+    "categoria": "stato_ordine",
+    "numero_ordine": "ORD-85720",
+    "nota": ""
+  },
+  {
+    "id": "test-12",
+    "categoria": "stato_ordine",
+    "numero_ordine": "ORD-85743",
+    "nota": "Il numero è scritto senza trattino e va normalizzato; la richiesta riguarda consegna e tracking."
+  },
+  {
+    "id": "test-13",
+    "categoria": "stato_ordine",
+    "numero_ordine": "ORD-29614",
+    "nota": "Email lunga con numeri aggiuntivi che non sono numeri d'ordine; la richiesta principale è lo stato della spedizione."
+  },
+  {
+    "id": "test-14",
+    "categoria": "stato_ordine",
+    "numero_ordine": "ORD-54281",
+    "nota": "Tono molto arrabbiato, ma la richiesta è semplicemente conoscere la consegna dell'ordine."
+  },
+  {
+    "id": "test-15",
+    "categoria": "stato_ordine",
+    "numero_ordine": null,
+    "nota": "La richiesta riguarda lo stato della spedizione, ma il presunto numero d'ordine contiene 6 cifre."
+  },
+  {
+    "id": "test-16",
+    "categoria": "info_prodotto",
+    "numero_ordine": null,
+    "nota": "Il numero 138 è una misura e non va interpretato come numero d'ordine."
+  },
+  {
+    "id": "test-17",
+    "categoria": "info_prodotto",
+    "numero_ordine": null,
+    "nota": ""
+  },
+  {
+    "id": "test-18",
+    "categoria": "info_prodotto",
+    "numero_ordine": null,
+    "nota": "Contiene due domande sul prodotto, entrambe precedenti all'acquisto."
+  },
+  {
+    "id": "test-19",
+    "categoria": "info_prodotto",
+    "numero_ordine": null,
+    "nota": "Email con più domande e numeri tecnici che potrebbero sembrare identificativi, ma non c'è alcun numero d'ordine."
+  },
+  {
+    "id": "test-20",
+    "categoria": "info_prodotto",
+    "numero_ordine": null,
+    "nota": "Il valore -3,50 è una prescrizione, non un numero d'ordine."
+  },
+  {
+    "id": "test-21",
+    "categoria": "altro",
+    "numero_ordine": null,
+    "nota": "Messaggio senza una richiesta di assistenza concreta."
+  },
+  {
+    "id": "test-22",
+    "categoria": "altro",
+    "numero_ordine": null,
+    "nota": "È una proposta commerciale, non una richiesta relativa a resi, garanzia, ordine o caratteristiche del prodotto."
+  },
+  {
+    "id": "test-23",
+    "categoria": "altro",
+    "numero_ordine": null,
+    "nota": "La richiesta riguarda la privacy e non una delle categorie operative principali."
+  },
+  {
+    "id": "test-24",
+    "categoria": "altro",
+    "numero_ordine": null,
+    "nota": "Candidatura di lavoro; il nome è un dato fittizio e non c'è una richiesta relativa a un ordine."
+  },
+  {
+    "id": "test-25",
+    "categoria": "altro",
+    "numero_ordine": null,
+    "nota": "Messaggio divagante senza una richiesta chiara; 73164, 129, 48 e 123456 sono altri numeri e nessuno è un numero d'ordine valido."
+  }
+]
