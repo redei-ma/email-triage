@@ -52,8 +52,13 @@ export async function askOllama(system: string, user: string, schema: object): P
 export const GEMINI_MODEL = "gemini-3.5-flash-lite";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
-// List price in US dollars per million tokens, paid tier, as of 2026-09-25.
-// The free tier costs nothing; this is what the same run would cost when paid.
+// List price in US dollars per million tokens, taxes excluded: paid tier,
+// Standard (real-time) mode, from ai.google.dev/gemini-api/docs/pricing on
+// 2026-09-25. Output includes thinking tokens. The free tier costs nothing:
+// this is what the same run would cost when paid. Every input token is priced
+// in full, even though Google bills tokens served from its cache for less: the
+// evaluation sends its emails seconds apart, so a cache discount would reflect
+// the test run rather than a shop receiving one email now and then.
 export const GEMINI_PRICE = { inputPerMillion: 0.3, outputPerMillion: 2.5 };
 
 export async function askGemini(system: string, user: string, schema: object): Promise<LlmReply> {
