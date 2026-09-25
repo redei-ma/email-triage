@@ -30,7 +30,8 @@ una nuova pratica, si interviene su un ordine in corso.
 Domande sulle caratteristiche o sull'uso di un prodotto, prima o dopo
 l'acquisto: materiali, misure, disponibilità, prezzi, compatibilità, lenti
 graduate, certificazioni (protezione UV, marcatura CE, normative), manutenzione
-e regolazione. Se il prodotto è guastato, la categoria è garanzia.
+e regolazione. Comprende le domande su costi e tempi di spedizione fatte prima
+di acquistare. Se il prodotto è guastato, la categoria è garanzia.
 
 ## altro
 
