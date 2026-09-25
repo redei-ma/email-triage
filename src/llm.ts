@@ -22,7 +22,10 @@ export type AskLlm = (system: string, user: string, schema: object) => Promise<L
 // ---- Local model: Ollama -------------------------------------------------
 
 export const OLLAMA_MODEL = "qwen2.5:7b";
-const OLLAMA_URL = "http://localhost:11434/api/chat";
+// OLLAMA_BASE_URL lets the Docker container reach an Ollama outside itself.
+// Not OLLAMA_HOST: Ollama reads that one too, often without "http://".
+const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL ?? "http://localhost:11434";
+const OLLAMA_URL = `${OLLAMA_BASE_URL}/api/chat`;
 
 export async function askOllama(system: string, user: string, schema: object): Promise<LlmReply> {
   const { data, ms, busyRetries } = await postJson("Ollama", OLLAMA_URL, {}, {

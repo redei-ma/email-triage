@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+    env_file:
+      - path: .env
+        required: false # without it the cloud model is skipped
+    extra_hosts:
+      - host.docker.internal:host-gateway # already defined on Docker Desktop, needed on Linux
+    # The host's user, so that on Linux the reports in runs/ belong to whoever
+    # ran make and not to the container's user. The Makefile sets both.
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    volumes:
+      - ./runs:/app/runs
