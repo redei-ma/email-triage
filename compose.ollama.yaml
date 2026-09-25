@@ -1,0 +1,33 @@
+# Added on top of compose.yaml for who has no Ollama on the machine, or does
+# not want to use it: Ollama runs in a container too. Docker has no access to
+# a Mac's GPU, so here the model runs on the CPU: same answers, slower.
+services:
+  app:
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
+    depends_on:
+      ollama-pull:
+        condition: service_completed_successfully
+
+  ollama:
+    image: ollama/ollama:0.34.4
+    volumes:
+      - ollama-models:/root/.ollama # the model is downloaded once, then kept
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 2s
+      retries: 15
+
+  # Downloads the model, the same one named in src/llm.ts, and exits. If it
+  # is already there it only checks it is up to date.
+  ollama-pull:
+    image: ollama/ollama:0.34.4
+    environment:
+      OLLAMA_HOST: ollama:11434
+    command: ["pull", "qwen2.5:7b"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+volumes:
+  ollama-models:
