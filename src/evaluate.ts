@@ -196,7 +196,16 @@ if (cloudOnly) {
   // Loading the model into memory takes seconds and happens on the first call
   // only: do it once, untimed, so it does not inflate the first email's time.
   console.log(`Warming up ${OLLAMA_MODEL}`);
-  await askOllama("Rispondi ok.", "ok", {});
+  // It is also the first contact with Ollama: if it fails, say how to fix it
+  // instead of dying with a stack trace.
+  try {
+    await askOllama("Rispondi ok.", "ok", {});
+  } catch (error) {
+    stop(
+      `${error instanceof Error ? error.message : String(error)}\n` +
+        `Start Ollama and download the model with: ollama pull ${OLLAMA_MODEL}`,
+    );
+  }
   console.log("B1, C1: local model");
   runs.push(await runLlm("B1 · " + OLLAMA_MODEL, askOllama, TRIAGE_TASK, fullTriage, null, emails));
   runs.push(await runLlm("C1 · regex + " + OLLAMA_MODEL, askOllama, CATEGORY_TASK, categoryPlusRegex, null, emails));
