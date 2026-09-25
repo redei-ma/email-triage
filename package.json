@@ -11,6 +11,8 @@
   "scripts": {
     "evaluate": "node --env-file-if-exists=.env src/evaluate.ts data/test",
     "evaluate:dev": "node --env-file-if-exists=.env src/evaluate.ts data/dev",
+    "evaluate:local": "node --env-file-if-exists=.env src/evaluate.ts data/test --local",
+    "evaluate:cloud": "node --env-file-if-exists=.env src/evaluate.ts data/test --cloud",
     "check": "tsc"
   },
   "devDependencies": {

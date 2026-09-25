@@ -1,6 +1,6 @@
 // Runs every solution on one folder of labeled emails and reports, for each,
 // how many answers are right, how long an email takes and what it would cost.
-// Usage: node --env-file-if-exists=.env src/evaluate.ts <folder>
+// Usage: node --env-file-if-exists=.env src/evaluate.ts <folder> [--local | --cloud]
 // The same report is printed and written to runs/<folder name>-<time>.md.
 // results/ holds the official runs quoted in the README; nothing writes there.
 
@@ -168,7 +168,21 @@ function report(folder: string, runs: Run[], notes: string[]): string {
 
 // ---- Main ---------------------------------------------------------------------
 
-const folder = process.argv[2] ?? "data/test";
+// The first argument that is not an option is the folder. --local skips the
+// cloud model, for a quick run that takes seconds and uses no quota; --cloud
+// skips the local model, for anyone who does not want to install Ollama.
+const args = process.argv.slice(2);
+const localOnly = args.includes("--local");
+const cloudOnly = args.includes("--cloud");
+// A wrong command line is the user's mistake, not a bug: a plain message
+// and a failing exit code, without a stack trace.
+function stop(message: string): never {
+  console.error(message);
+  process.exit(1);
+}
+if (localOnly && cloudOnly) stop("--local and --cloud exclude each other.");
+if (cloudOnly && !process.env.GEMINI_API_KEY) stop("--cloud needs GEMINI_API_KEY in .env (see .env.example).");
+const folder = args.find((arg) => !arg.startsWith("--")) ?? "data/test";
 const emails = loadDataset(folder);
 const runs: Run[] = [];
 const notes: string[] = [];
@@ -176,22 +190,33 @@ const notes: string[] = [];
 console.log(`A: rules on ${emails.length} emails`);
 runs.push(runRules(emails));
 
-// Loading the model into memory takes seconds and happens on the first call
-// only: do it once, untimed, so it does not inflate the first email's time.
-console.log(`Warming up ${OLLAMA_MODEL}`);
-await askOllama("Rispondi ok.", "ok", {});
-console.log("B1, C1: local model");
-runs.push(await runLlm("B1 · " + OLLAMA_MODEL, askOllama, TRIAGE_TASK, fullTriage, null, emails));
-runs.push(await runLlm("C1 · regex + " + OLLAMA_MODEL, askOllama, CATEGORY_TASK, categoryPlusRegex, null, emails));
+if (cloudOnly) {
+  notes.push("B1 and C1 were skipped: cloud-only run (--cloud).");
+} else {
+  // Loading the model into memory takes seconds and happens on the first call
+  // only: do it once, untimed, so it does not inflate the first email's time.
+  console.log(`Warming up ${OLLAMA_MODEL}`);
+  await askOllama("Rispondi ok.", "ok", {});
+  console.log("B1, C1: local model");
+  runs.push(await runLlm("B1 · " + OLLAMA_MODEL, askOllama, TRIAGE_TASK, fullTriage, null, emails));
+  runs.push(await runLlm("C1 · regex + " + OLLAMA_MODEL, askOllama, CATEGORY_TASK, categoryPlusRegex, null, emails));
+}
 
-if (process.env.GEMINI_API_KEY) {
-  // The free tier allows 15 requests a minute: one every 4 seconds keeps
-  // under it. The pause comes before the request, so it is never timed.
+if (localOnly) {
+  notes.push("B2 and C2 were skipped: local-only run (--local).");
+} else if (process.env.GEMINI_API_KEY) {
+  // The free tier allows 15 requests a minute, so requests start at least
+  // 4 seconds apart. The wait counts from the start of the previous request,
+  // so the time spent waiting for its answer already counts toward it. The
+  // wait comes before the request, so it is never timed.
+  let lastStart = -Infinity;
   const pacedGemini: AskLlm = async (system, user, schema) => {
-    await sleep(4000);
+    const wait = lastStart + 4000 - performance.now();
+    if (wait > 0) await sleep(wait);
+    lastStart = performance.now();
     return askGemini(system, user, schema);
   };
-  console.log("B2, C2: cloud model (about 4 seconds per request, to respect the rate limit)");
+  console.log("B2, C2: cloud model (at most one request every 4 seconds, to respect the rate limit)");
   runs.push(await runLlm("B2 · " + GEMINI_MODEL, pacedGemini, TRIAGE_TASK, fullTriage, GEMINI_PRICE, emails));
   runs.push(await runLlm("C2 · regex + " + GEMINI_MODEL, pacedGemini, CATEGORY_TASK, categoryPlusRegex, GEMINI_PRICE, emails));
 } else {

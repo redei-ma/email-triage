@@ -116,6 +116,9 @@ async function postJson(
       method: "POST",
       headers: { "Content-Type": "application/json", ...headers },
       body: JSON.stringify(body),
+    }).catch((error: unknown) => {
+      // No answer at all, not even an HTTP error: usually Ollama not running.
+      throw new Error(`${provider}: no response from ${url}. Is it running?`, { cause: error });
     });
     if (BUSY_STATUSES.includes(response.status) && busyRetries < MAX_BUSY_RETRIES) {
       const detail = await response.text();
