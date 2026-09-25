@@ -102,7 +102,8 @@ export async function askGemini(system: string, user: string, schema: object): P
 // again, up to eight times, doubling the wait up to a 30-second cap (2, 4, 8,
 // 16, 30, 30, 30, 30 seconds). On the free tier Gemini often answers 503
 // several times in a row at busy hours, on every model. A 429 for the daily
-// quota is different: it will not clear in seconds, so it stops the run.
+// quota is different: it will not clear in seconds, so it fails at once.
+// Either failure is thrown; evaluate.ts then skips that solution.
 const BUSY_STATUSES = [429, 503];
 const MAX_BUSY_RETRIES = 8;
 const MAX_WAIT_MS = 30_000;
@@ -123,16 +124,38 @@ async function postJson(
       // No answer at all, not even an HTTP error: usually Ollama not running.
       throw new Error(`${provider}: no response from ${url}. Is it running?`, { cause: error });
     });
-    if (BUSY_STATUSES.includes(response.status) && busyRetries < MAX_BUSY_RETRIES) {
+    if (BUSY_STATUSES.includes(response.status)) {
       const detail = await response.text();
-      if (detail.includes("PerDay")) throw new Error(`${provider}: daily quota exhausted: ${detail}`);
+      if (detail.includes("PerDay")) {
+        throw new Error(`${provider}: daily quota exhausted (HTTP ${response.status})`);
+      }
+      if (busyRetries === MAX_BUSY_RETRIES) {
+        throw new Error(`${provider}: still busy after ${MAX_BUSY_RETRIES} retries (HTTP ${response.status})`);
+      }
       await sleep(Math.min(2000 * 2 ** busyRetries, MAX_WAIT_MS));
       continue;
     }
-    if (!response.ok) throw new Error(`${provider}: HTTP ${response.status}: ${await response.text()}`);
+    if (!response.ok) {
+      throw new Error(`${provider}: HTTP ${response.status}: ${errorSummary(await response.text())}`);
+    }
     const data: unknown = await response.json();
     return { data, ms: performance.now() - start, busyRetries };
   }
+}
+
+// The error bodies are pages of JSON; one line is enough for a message. Both
+// providers put the explanation in error.message (Ollama in error), otherwise
+// the start of the text is kept.
+function errorSummary(body: string): string {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(body);
+  } catch {
+    parsed = undefined;
+  }
+  const message = dig(parsed, ["error", "message"]) ?? dig(parsed, ["error"]);
+  const text = typeof message === "string" ? message : body;
+  return text.replace(/\s+/g, " ").trim().slice(0, 200);
 }
 
 // ---- Reading the JSON the providers send back -----------------------------

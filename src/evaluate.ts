@@ -226,8 +226,23 @@ if (localOnly) {
     return askGemini(system, user, schema);
   };
   console.log("B2, C2: cloud model (at most one request every 4 seconds, to respect the rate limit)");
-  runs.push(await runLlm("B2 · " + GEMINI_MODEL, pacedGemini, TRIAGE_TASK, fullTriage, GEMINI_PRICE, emails));
-  runs.push(await runLlm("C2 · regex + " + GEMINI_MODEL, pacedGemini, CATEGORY_TASK, categoryPlusRegex, GEMINI_PRICE, emails));
+  // The cloud can fail for reasons outside the experiment: busy after every
+  // retry, or the daily quota used up. Then the whole solution is skipped, not
+  // single emails (a score on part of the emails would not compare with the
+  // others), and the report is still written with what did run.
+  const runCloud = async (name: string, run: () => Promise<Run>) => {
+    try {
+      runs.push(await run());
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      console.error(`${name} skipped: ${reason}`);
+      notes.push(`${name} was skipped: ${reason}.`);
+    }
+  };
+  await runCloud("B2", () => runLlm("B2 · " + GEMINI_MODEL, pacedGemini, TRIAGE_TASK, fullTriage, GEMINI_PRICE, emails));
+  await runCloud("C2", () =>
+    runLlm("C2 · regex + " + GEMINI_MODEL, pacedGemini, CATEGORY_TASK, categoryPlusRegex, GEMINI_PRICE, emails),
+  );
 } else {
   notes.push("B2 and C2 were skipped: GEMINI_API_KEY is not set in .env.");
 }
