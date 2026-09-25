@@ -1,7 +1,8 @@
 // Runs every solution on one folder of labeled emails and reports, for each,
 // how many answers are right, how long an email takes and what it would cost.
 // Usage: node --env-file-if-exists=.env src/evaluate.ts <folder>
-// The same report is printed and written to results/<folder name>.md.
+// The same report is printed and written to runs/<folder name>-<time>.md.
+// results/ holds the official runs quoted in the README; nothing writes there.
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { basename } from "node:path";
@@ -198,8 +199,11 @@ if (process.env.GEMINI_API_KEY) {
 }
 
 const text = report(folder, runs, notes);
-mkdirSync("results", { recursive: true });
-const file = `results/${basename(folder)}.md`;
-writeFileSync(file, text);
+// A new file for every run, named after the folder and the UTC time, so no
+// run overwrites another; the "wx" flag makes sure of it.
+const time = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+mkdirSync("runs", { recursive: true });
+const file = `runs/${basename(folder)}-${time}.md`;
+writeFileSync(file, text, { flag: "wx" });
 console.log("\n" + text);
 console.log(`Written to ${file}`);

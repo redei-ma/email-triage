@@ -23,3 +23,7 @@ node_modules/
 dist/
 *.tsbuildinfo
 npm-debug.log*
+
+# ---- this project: evaluation runs --------------------------------------
+# Every run writes a report here; the official ones are committed in results/.
+runs/
