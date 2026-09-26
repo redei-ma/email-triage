@@ -163,7 +163,16 @@ sure (the negation), so this would need a new test set before relying on it.
   resemble the development ones (same generator, same prompt).
 - The cloud model is a small free-tier one; a larger paid model was not
   tested and could do better everywhere.
-- Nothing was changed after the test was opened.
+- Prompt injection was probed after the evaluation, with 15 handwritten
+  attempts: the JSON schema held every time, so an attack can at most
+  misroute an email, and every misroute on the attempts kept aside
+  disagreed with the rules, the check a production system should send to a
+  person. The customer's text is stripped of the `<email>` delimiters, so
+  an email cannot close its own block.
+- No rule, prompt or counting rule was changed after the test was opened.
+  Later changes (where reports are saved, pacing, error handling, the
+  delimiter stripping) leave every prompt of the dataset identical, so the
+  published results stay reproducible.
 
 ## From prototype to production
 
