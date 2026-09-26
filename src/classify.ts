@@ -5,20 +5,27 @@
 import type { AskLlm } from "./llm.ts";
 import { emailPrompt, retryPrompt, type LlmTask } from "./prompt.ts";
 
-// T is the type of a valid answer: Triage for B, CategoryOnly for C.
+/**
+ * The outcome of a task on one email. T is the type of a valid answer:
+ * Triage for B, CategoryOnly for C. Time and tokens add up both attempts,
+ * because a retry is part of what the solution costs.
+ */
 export type LlmResult<T> = {
-  answer: T | null; // null if the answer was still invalid after the retry
-  problem: string | null; // what was wrong with the first answer, if anything
+  /** Null if the answer was still invalid after the retry. */
+  answer: T | null;
+  /** What was wrong with the first answer, if anything. */
+  problem: string | null;
   retried: boolean;
-  // Both attempts together: a retry is part of what the solution costs.
   ms: number;
   inputTokens: number;
   outputTokens: number;
   busyRetries: number;
 };
 
-// JSON.parse throws on text that is not JSON; here that is just one more kind
-// of invalid answer, which the task's findProblem then describes.
+/**
+ * JSON.parse throws on text that is not JSON; here that is just one more kind
+ * of invalid answer, which the task's findProblem then describes.
+ */
 function parseAnswer(text: string): unknown {
   try {
     return JSON.parse(text);
@@ -27,6 +34,13 @@ function parseAnswer(text: string): unknown {
   }
 }
 
+/**
+ * Asks the model, validates the answer and, if it is invalid, asks once more
+ * with the answer and what was wrong with it. There is no third attempt.
+ *
+ * @param ask the provider: askOllama or askGemini
+ * @param task what to ask for: the full triage (B) or the category only (C)
+ */
 export async function classifyWithLlm<T>(ask: AskLlm, task: LlmTask<T>, email: string): Promise<LlmResult<T>> {
   const first = await ask(task.system, emailPrompt(email), task.schema);
   const firstAnswer = parseAnswer(first.text);

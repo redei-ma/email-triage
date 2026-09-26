@@ -5,28 +5,41 @@
 
 import { setTimeout as sleep } from "node:timers/promises";
 
+/** One answer of a provider, with what it cost. */
 export type LlmReply = {
-  text: string; // the raw answer, still to be parsed and validated
+  /** The raw answer, still to be parsed and validated. */
+  text: string;
   inputTokens: number;
-  outputTokens: number; // billed output, thinking included
-  ms: number; // duration of the request that succeeded, waits excluded
-  busyRetries: number; // how many times the service said it was busy first
+  /** Billed output, thinking included. */
+  outputTokens: number;
+  /** Duration of the request that succeeded, waits excluded. */
+  ms: number;
+  /** How many times the service said it was busy before answering. */
+  busyRetries: number;
 };
 
-// system: the fixed instructions, the same for every email.
-// user: the email to classify.
-// schema: the JSON shape the answer must have; the provider constrains
-// generation to it (the schemas are defined with the tasks, in prompt.ts).
+/**
+ * The signature every provider shares, so the rest of the program does not
+ * know which one it is talking to.
+ *
+ * @param system the fixed instructions, the same for every email
+ * @param user the email to classify
+ * @param schema the JSON shape the answer must have; the provider constrains
+ * generation to it (the schemas are defined with the tasks, in prompt.ts)
+ */
 export type AskLlm = (system: string, user: string, schema: object) => Promise<LlmReply>;
 
 // ---- Local model: Ollama -------------------------------------------------
 
 export const OLLAMA_MODEL = "qwen2.5:7b";
-// OLLAMA_BASE_URL lets the Docker container reach an Ollama outside itself.
-// Not OLLAMA_HOST: Ollama reads that one too, often without "http://".
+/**
+ * OLLAMA_BASE_URL lets the Docker container reach an Ollama outside itself.
+ * Not OLLAMA_HOST: Ollama reads that one too, often without "http://".
+ */
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL ?? "http://localhost:11434";
 const OLLAMA_URL = `${OLLAMA_BASE_URL}/api/chat`;
 
+/** The local model through Ollama's HTTP API, at temperature 0. */
 export async function askOllama(system: string, user: string, schema: object): Promise<LlmReply> {
   const { data, ms, busyRetries } = await postJson("Ollama", OLLAMA_URL, {}, {
     model: OLLAMA_MODEL,
@@ -49,21 +62,26 @@ export async function askOllama(system: string, user: string, schema: object): P
 
 // ---- Cloud model: Gemini (optional, needs GEMINI_API_KEY in .env) ---------
 
-// Flash-Lite rather than Flash: on the free tier Flash allows 20 requests a
-// day, fewer than the 25 test emails, while Flash-Lite allows 500 a day and
-// 15 a minute (AI Studio, 2026-09-25). So anyone can rerun the evaluation for free.
+/**
+ * Flash-Lite rather than Flash: on the free tier Flash allows 20 requests a
+ * day, fewer than the 25 test emails, while Flash-Lite allows 500 a day and
+ * 15 a minute (AI Studio, 2026-09-25). So anyone can rerun the evaluation for free.
+ */
 export const GEMINI_MODEL = "gemini-3.5-flash-lite";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
-// List price in US dollars per million tokens, taxes excluded: paid tier,
-// Standard (real-time) mode, from ai.google.dev/gemini-api/docs/pricing on
-// 2026-09-25. Output includes thinking tokens. The free tier costs nothing:
-// this is what the same run would cost when paid. Every input token is priced
-// in full, even though Google bills tokens served from its cache for less: the
-// evaluation sends its emails seconds apart, so a cache discount would reflect
-// the test run rather than a shop receiving one email now and then.
+/**
+ * List price in US dollars per million tokens, taxes excluded: paid tier,
+ * Standard (real-time) mode, from ai.google.dev/gemini-api/docs/pricing on
+ * 2026-09-25. Output includes thinking tokens. The free tier costs nothing:
+ * this is what the same run would cost when paid. Every input token is priced
+ * in full, even though Google bills tokens served from its cache for less: the
+ * evaluation sends its emails seconds apart, so a cache discount would reflect
+ * the test run rather than a shop receiving one email now and then.
+ */
 export const GEMINI_PRICE = { inputPerMillion: 0.3, outputPerMillion: 2.5 };
 
+/** The cloud model through the Gemini API; needs GEMINI_API_KEY. */
 export async function askGemini(system: string, user: string, schema: object): Promise<LlmReply> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY is not set");
@@ -97,17 +115,22 @@ export async function askGemini(system: string, user: string, schema: object): P
 
 // ---- HTTP -----------------------------------------------------------------
 
-// 429 (too many requests this minute) and 503 (overloaded) mean the service is
-// busy, not that the model answered badly: wait and send the same request
-// again, up to eight times, doubling the wait up to a 30-second cap (2, 4, 8,
-// 16, 30, 30, 30, 30 seconds). On the free tier Gemini often answers 503
-// several times in a row at busy hours, on every model. A 429 for the daily
-// quota is different: it will not clear in seconds, so it fails at once.
-// Either failure is thrown; evaluate.ts then skips that solution.
 const BUSY_STATUSES = [429, 503];
 const MAX_BUSY_RETRIES = 8;
 const MAX_WAIT_MS = 30_000;
 
+/**
+ * Sends one request and returns the parsed answer with the time it took.
+ *
+ * 429 (too many requests this minute) and 503 (overloaded) mean the service is
+ * busy, not that the model answered badly: wait and send the same request
+ * again, up to eight times, doubling the wait up to a 30-second cap (2, 4, 8,
+ * 16, 30, 30, 30, 30 seconds). On the free tier Gemini often answers 503
+ * several times in a row at busy hours, on every model. A 429 for the daily
+ * quota is different: it will not clear in seconds, so it fails at once.
+ * Either failure is thrown with a one-line message; evaluate.ts then skips
+ * that solution.
+ */
 async function postJson(
   provider: string,
   url: string,
@@ -143,9 +166,11 @@ async function postJson(
   }
 }
 
-// The error bodies are pages of JSON; one line is enough for a message. Both
-// providers put the explanation in error.message (Ollama in error), otherwise
-// the start of the text is kept.
+/**
+ * The error bodies are pages of JSON; one line is enough for a message. Both
+ * providers put the explanation in error.message (Ollama in error), otherwise
+ * the start of the text is kept.
+ */
 function errorSummary(body: string): string {
   let parsed: unknown;
   try {
@@ -160,9 +185,14 @@ function errorSummary(body: string): string {
 
 // ---- Reading the JSON the providers send back -----------------------------
 
-// Follows a path of keys and indexes into a parsed JSON value, for example
-// ["message", "content"]. Returns undefined as soon as a step is missing, so
-// the answer never has to be trusted with a cast to its expected shape.
+/**
+ * Follows a path of keys and indexes into a parsed JSON value, for example
+ * `["message", "content"]`, so the answer never has to be trusted with a cast
+ * to its expected shape.
+ *
+ * @returns the value at the end of the path, or undefined as soon as a step
+ * is missing.
+ */
 function dig(value: unknown, path: (string | number)[]): unknown {
   let current = value;
   for (const key of path) {
@@ -173,15 +203,17 @@ function dig(value: unknown, path: (string | number)[]): unknown {
   return current;
 }
 
-// The answer text is essential: without it there is nothing to evaluate.
+/** The answer text is essential: without it there is nothing to evaluate. */
 function readText(data: unknown, path: (string | number)[]): string {
   const text = dig(data, path);
   if (typeof text !== "string") throw new Error(`unexpected response: no text at ${path.join(".")}`);
   return text;
 }
 
-// Token counts are secondary: a missing one counts as 0 instead of stopping
-// the run (Ollama, for instance, omits prompt_eval_count for a cached prompt).
+/**
+ * Token counts are secondary: a missing one counts as 0 instead of stopping
+ * the run (Ollama, for instance, omits prompt_eval_count for a cached prompt).
+ */
 function readCount(data: unknown, path: (string | number)[]): number {
   const count = dig(data, path);
   return typeof count === "number" ? count : 0;

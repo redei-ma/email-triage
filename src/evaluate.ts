@@ -14,9 +14,11 @@ import { CATEGORY_TASK, TRIAGE_TASK, type LlmTask } from "./prompt.ts";
 import { classifyWithRules, findOrderNumber } from "./rules.ts";
 import type { Category, Triage } from "./types.ts";
 
-// What a solution answered for one email. categoria is null when the model
-// gave no valid category; the whole answer is null when a full triage (B) was
-// still invalid after the retry, which counts as wrong on both fields.
+/**
+ * What a solution answered for one email. categoria is null when the model
+ * gave no valid category; the whole answer is null when a full triage (B) was
+ * still invalid after the retry, which counts as wrong on both fields.
+ */
 type Answer = { categoria: Category | null; numero_ordine: string | null };
 
 type Outcome = { email: Email; answer: Answer | null; problem: string | null };
@@ -35,7 +37,7 @@ type Run = {
 
 type Price = { inputPerMillion: number; outputPerMillion: number };
 
-// A: rules only. Timed per email like the others, though it takes microseconds.
+/** A: rules only. Timed per email like the others, though it takes microseconds. */
 function runRules(emails: Email[]): Run {
   const run = emptyRun("A · rules", false);
   for (const email of emails) {
@@ -47,16 +49,20 @@ function runRules(emails: Email[]): Run {
   return run;
 }
 
-// B and C: a language model does the task on each email, then toAnswer turns
-// its valid answer (or null) into the solution's answer. For B that is the
-// model's answer as it is; for C it is the model's category plus the order
-// number found by the regular expression.
+/**
+ * B and C: a language model does the task on each email.
+ *
+ * @param toAnswer turns the model's valid answer (or null) into the
+ * solution's answer: for B the model's answer as it is, for C the model's
+ * category plus the order number found by the regular expression
+ * @param price null for the local model, which costs nothing per request
+ */
 async function runLlm<T>(
   name: string,
   ask: AskLlm,
   task: LlmTask<T>,
   toAnswer: (answer: T | null, email: Email) => Answer | null,
-  price: Price | null, // null for the local model, which costs nothing per request
+  price: Price | null,
   emails: Email[],
 ): Promise<Run> {
   const run = emptyRun(name, true);
@@ -80,13 +86,15 @@ function emptyRun(name: string, usesLlm: boolean): Run {
   return { name, outcomes: [], totalMs: 0, usesLlm, retries: 0, busy: 0, inputTokens: 0, outputTokens: 0, costDollars: 0 };
 }
 
-// B keeps the model's triage; an invalid one stays null, wrong on both fields.
+/** B keeps the model's triage; an invalid one stays null, wrong on both fields. */
 function fullTriage(answer: Triage | null): Answer | null {
   return answer;
 }
 
-// C takes only the category from the model and the order number from the
-// regular expression, so a missing category does not cost the order number.
+/**
+ * C takes only the category from the model and the order number from the
+ * regular expression, so a missing category does not cost the order number.
+ */
 function categoryPlusRegex(answer: { categoria: Category } | null, email: Email): Answer {
   return { categoria: answer === null ? null : answer.categoria, numero_ordine: findOrderNumber(email.text) };
 }
@@ -117,6 +125,10 @@ function formatAnswer(answer: Answer): string {
   return `${answer.categoria ?? "no valid category"} / ${answer.numero_ordine ?? "null"}`;
 }
 
+/**
+ * The Markdown report: the table, the notes, then the errors of each solution.
+ * runs[0] is always A, which runs in every mode, so the table is never empty.
+ */
 function report(folder: string, runs: Run[], notes: string[]): string {
   const count = runs[0].outcomes.length;
   const lines = [
@@ -174,8 +186,10 @@ function report(folder: string, runs: Run[], notes: string[]): string {
 const args = process.argv.slice(2);
 const localOnly = args.includes("--local");
 const cloudOnly = args.includes("--cloud");
-// A wrong command line is the user's mistake, not a bug: a plain message
-// and a failing exit code, without a stack trace.
+/**
+ * A wrong command line is the user's mistake, not a bug: a plain message and a
+ * failing exit code, without a stack trace.
+ */
 function stop(message: string): never {
   console.error(message);
   process.exit(1);

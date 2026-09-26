@@ -3,36 +3,43 @@
 
 import type { Category, Triage } from "./types.ts";
 
-// An order number is "ord" or "ordine", an optional abbreviation of "numero",
-// an optional separator, then exactly five digits. The rule accepts the common
-// ways of writing the same number but does not guess: a number with the wrong
-// digit count, or with no "ord" in front, is not an order number.
-//
-//   \bord(?:ine)?                    "ord" or "ordine", at the start of a word
-//   \s*(?:numero|num\.?|nr\.?|n°|n\.?)?  optional "numero", "num.", "nr.", "n°", "n."
-//   \s*[-:#.]?\s*                    optional separator: "-", ":", "#" or "."
-//   (\d{5})(?!\d)                    exactly five digits, not followed by a sixth
-//
-// The "i" flag ignores case: "ORD", "Ord" and "ord" all match.
+/**
+ * An order number is "ord" or "ordine", an optional abbreviation of "numero",
+ * an optional separator, then exactly five digits. The rule accepts the common
+ * ways of writing the same number but does not guess: a number with the wrong
+ * digit count, or with no "ord" in front, is not an order number.
+ *
+ *     \bord(?:ine)?                    "ord" or "ordine", at the start of a word
+ *     \s*(?:numero|num\.?|nr\.?|n°|n\.?)?  optional "numero", "num.", "nr.", "n°", "n."
+ *     \s*[-:#.]?\s*                    optional separator: "-", ":", "#" or "."
+ *     (\d{5})(?!\d)                    exactly five digits, not followed by a sixth
+ *
+ * The "i" flag ignores case: "ORD", "Ord" and "ord" all match.
+ */
 const ORDER_NUMBER = /\bord(?:ine)?\s*(?:numero|num\.?|nr\.?|n°|n\.?)?\s*[-:#.]?\s*(\d{5})(?!\d)/i;
 
-// Returns the first order number in the text, normalized to "ORD-12345".
+/**
+ * @returns the first order number in the text, normalized to "ORD-12345", or
+ * null if there is none.
+ */
 export function findOrderNumber(text: string): string | null {
   const match = ORDER_NUMBER.exec(text);
   if (match === null) return null;
   return `ORD-${match[1]}`;
 }
 
-// Keywords for each category, as stems anchored at the start of a word:
-// "restitu" covers restituire, restituisco, restituzione. A few entries are
-// fixed expressions ("non funzion", "ancora arrivat") whose words mean one
-// thing only together. Words that fit several categories are left out rather
-// than patched with context rules: that ambiguity is what the LLM is for.
-//
-// The order of the list is the tie-break: on equal scores the earlier
-// category wins. Reso comes first because its words state what the customer
-// wants (a refund), while most garanzia words only describe the problem.
-// "altro" has no keywords: it is what is left when nothing matches.
+/**
+ * Keywords for each category, as stems anchored at the start of a word:
+ * "restitu" covers restituire, restituisco, restituzione. A few entries are
+ * fixed expressions ("non funzion", "ancora arrivat") whose words mean one
+ * thing only together. Words that fit several categories are left out rather
+ * than patched with context rules: that ambiguity is what the LLM is for.
+ *
+ * The order of the list is the tie-break: on equal scores the earlier
+ * category wins. Reso comes first because its words state what the customer
+ * wants (a refund), while most garanzia words only describe the problem.
+ * "altro" has no keywords: it is what is left when nothing matches.
+ */
 const KEYWORDS: { category: Category; patterns: RegExp[] }[] = [
   {
     category: "reso",
@@ -62,9 +69,12 @@ const KEYWORDS: { category: Category; patterns: RegExp[] }[] = [
   },
 ];
 
-// Scores each category by counting every occurrence of its keywords, so a
-// customer who repeats one word weighs as much as one who uses synonyms.
-// Returns the highest-scoring category, or "altro" if nothing matched.
+/**
+ * Scores each category by counting every occurrence of its keywords, so a
+ * customer who repeats one word weighs as much as one who uses synonyms.
+ *
+ * @returns the highest-scoring category, or "altro" if nothing matched.
+ */
 function scoreCategories(text: string): Category {
   const lower = text.toLowerCase();
   let best: Category = "altro";
@@ -83,7 +93,11 @@ function scoreCategories(text: string): Category {
   return best;
 }
 
-// The subject line is scored together with the body, with the same weight.
+/**
+ * Solution A. The subject line is scored together with the body, with the
+ * same weight: a rule letting the subject decide changed nothing on the
+ * development set.
+ */
 export function classifyWithRules(text: string): Triage {
   return { categoria: scoreCategories(text), numero_ordine: findOrderNumber(text) };
 }
