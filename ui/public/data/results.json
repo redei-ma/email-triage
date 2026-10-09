@@ -1,0 +1,1107 @@
+{
+  "runDate": "2026-09-25",
+  "localModel": "qwen2.5:7b",
+  "cloudModel": "gemini-3.5-flash-lite",
+  "solutions": [
+    {
+      "id": "A",
+      "name": "A · rules",
+      "description": "Keyword rules score the category by stem matches, and a regular expression finds and normalizes the order number: no model, no network, fully predictable.",
+      "category": "20/25 (80%)",
+      "orderNumber": "25/25 (100%)",
+      "bothRight": "20/25 (80%)",
+      "avgTime": "< 1 ms",
+      "costPer1000": "$0.00"
+    },
+    {
+      "id": "B1",
+      "name": "B1 · qwen2.5:7b",
+      "description": "A local 7B model (qwen2.5:7b, through Ollama) answers category and order number together from one prompt, running entirely on the machine.",
+      "category": "23/25 (92%)",
+      "orderNumber": "22/25 (88%)",
+      "bothRight": "22/25 (88%)",
+      "avgTime": "1.1 s",
+      "costPer1000": "$0.00"
+    },
+    {
+      "id": "C1",
+      "name": "C1 · regex + qwen2.5:7b",
+      "description": "The regular expression supplies the order number, and the local model is asked for the category only, in a shorter prompt.",
+      "category": "25/25 (100%)",
+      "orderNumber": "25/25 (100%)",
+      "bothRight": "25/25 (100%)",
+      "avgTime": "573 ms",
+      "costPer1000": "$0.00"
+    },
+    {
+      "id": "B2",
+      "name": "B2 · gemini-3.5-flash-lite",
+      "description": "The same full-triage prompt, sent to a cloud model (Gemini Flash-Lite), at the cost of latency and a per-request price.",
+      "category": "25/25 (100%)",
+      "orderNumber": "25/25 (100%)",
+      "bothRight": "25/25 (100%)",
+      "avgTime": "2.5 s",
+      "costPer1000": "$0.29"
+    },
+    {
+      "id": "C2",
+      "name": "C2 · regex + gemini-3.5-flash-lite",
+      "description": "The regular expression supplies the order number, and the cloud model is asked for the category only.",
+      "category": "25/25 (100%)",
+      "orderNumber": "25/25 (100%)",
+      "bothRight": "25/25 (100%)",
+      "avgTime": "2.4 s",
+      "costPer1000": "$0.22"
+    }
+  ],
+  "emails": [
+    {
+      "id": "test-01",
+      "text": "Buongiorno, vorrei restituire gli occhiali che ho ricevuto ieri perché il colore non mi piace come pensavo. Potete indicarmi come ottenere il rimborso? Ord-73164",
+      "expected": {
+        "categoria": "reso",
+        "numero_ordine": "ORD-73164"
+      },
+      "nota": "",
+      "answers": {
+        "A": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-73164",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-73164",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-73164",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-73164",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-73164",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-02",
+      "text": "Oggetto: Cambio misura\nSalve, gli occhiali modello Nebula mi stanno troppo stretti. Vorrei cambiarli con una misura più grande. L'ordine è ORD 25891.",
+      "expected": {
+        "categoria": "reso",
+        "numero_ordine": "ORD-25891"
+      },
+      "nota": "",
+      "answers": {
+        "A": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-25891",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-25891",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-25891",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-25891",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-25891",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-03",
+      "text": "Ciao, il pacco è arrivato oggi ma la montatura era spezzata. Non mi interessa una sostituzione, vorrei semplicemente riavere i soldi. Ordine n. ORD-60437",
+      "expected": {
+        "categoria": "reso",
+        "numero_ordine": "ORD-60437"
+      },
+      "nota": "È un caso al limite con un prodotto arrivato danneggiato, ma la richiesta principale è esplicitamente il rimborso.",
+      "answers": {
+        "A": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-60437",
+          "categoriaCorrect": false,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-60437",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-60437",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-60437",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-60437",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": true
+    },
+    {
+      "id": "test-04",
+      "text": "Buonasera, ho cambiato idea sull'acquisto. Gli occhiali sono ancora nella confezione originale e vorrei fare il reso. Il riferimento che trovo nella mail è ORD12376. Grazie.",
+      "expected": {
+        "categoria": "reso",
+        "numero_ordine": "ORD-12376"
+      },
+      "nota": "Il numero d'ordine è scritto senza trattino e va normalizzato.",
+      "answers": {
+        "A": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-12376",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-12376",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-12376",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-12376",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-12376",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-05",
+      "text": "Salve, vi scrivo per il mio ordine 8462. Vorrei restituire gli occhiali perché ho scelto il colore sbagliato e, se possibile, ricevere il rimborso. Fatemi sapere come procedere.",
+      "expected": {
+        "categoria": "reso",
+        "numero_ordine": null
+      },
+      "nota": "La richiesta è chiaramente un reso, ma il numero contiene solo 4 cifre.",
+      "answers": {
+        "A": {
+          "categoria": "reso",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "invalid": "numero_ordine \"ORD-8462\" non è \"ORD-\" seguito da 5 cifre, né null",
+          "categoriaCorrect": false,
+          "numeroOrdineCorrect": false
+        },
+        "C1": {
+          "categoria": "reso",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "reso",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "reso",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": true
+    },
+    {
+      "id": "test-06",
+      "text": "Buongiorno, gli occhiali da sole modello Arco che ho acquistato a maggio hanno iniziato a scolorirsi sulle aste. Non li ho usati in condizioni particolari. Vorrei sapere se potete sostituirli. ORD-51928",
+      "expected": {
+        "categoria": "garanzia",
+        "numero_ordine": "ORD-51928"
+      },
+      "nota": "Non usa le parole 'garanzia', 'difetto' o 'rotto': il problema emerge dalla descrizione del deterioramento dopo l'uso e chiede una sostituzione.",
+      "answers": {
+        "A": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-51928",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-51928",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-51928",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-51928",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-51928",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-07",
+      "text": "Ciao, una delle lenti dei miei occhiali da vista si è staccata dalla montatura dopo pochi mesi. Posso mandarveli per farli sistemare? Ord 97351",
+      "expected": {
+        "categoria": "garanzia",
+        "numero_ordine": "ORD-97351"
+      },
+      "nota": "Descrive una rottura dopo l'uso senza usare la parola 'rotto' e chiede una riparazione.",
+      "answers": {
+        "A": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-97351",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-97351",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-97351",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-97351",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-97351",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-08",
+      "text": "Oggetto: Problema con gli occhiali\nSalve, dopo circa tre settimane di utilizzo la cerniera destra è diventata molto dura e adesso l'asta non si apre quasi più. Vorrei una sostituzione. Il numero ordine è ORD-42107.",
+      "expected": {
+        "categoria": "garanzia",
+        "numero_ordine": "ORD-42107"
+      },
+      "nota": "È un problema comparso dopo l'uso; la richiesta di sostituzione prevale sul semplice reso.",
+      "answers": {
+        "A": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-42107",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-42107",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-42107",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-42107",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-42107",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-09",
+      "text": "Buongiorno, sono piuttosto arrabbiato perché per il prezzo che li ho pagati mi aspettavo di meglio. La montatura degli occhiali si è allentata dopo pochissimo e continua a scivolare dal viso. Potete provvedere alla riparazione? ORD-68032",
+      "expected": {
+        "categoria": "garanzia",
+        "numero_ordine": "ORD-68032"
+      },
+      "nota": "Il tono è arrabbiato e non compare la parola 'garanzia'; la richiesta concreta è una riparazione per un problema comparso dopo l'uso.",
+      "answers": {
+        "A": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-68032",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-68032",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-68032",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-68032",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-68032",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-10",
+      "text": "Salve, vi contatto per sapere se posso far sostituire gli occhiali acquistati da voi. Il ponte si è deformato da solo e ora mi dà fastidio sul naso. Se serve posso inviare delle foto. L'ordine è ORD-3146.",
+      "expected": {
+        "categoria": "garanzia",
+        "numero_ordine": null
+      },
+      "nota": "La richiesta è una sostituzione per un problema emerso durante l'uso, ma il numero d'ordine ha solo 4 cifre.",
+      "answers": {
+        "A": {
+          "categoria": "garanzia",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "garanzia",
+          "numero_ordine": "ORD-31465",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": false
+        },
+        "C1": {
+          "categoria": "garanzia",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "garanzia",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "garanzia",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": true
+    },
+    {
+      "id": "test-11",
+      "text": "Buongiorno, vorrei sapere dove si trova il mio pacco. Sul sito risulta ancora in preparazione da diversi giorni. Ordine ORD-85720.",
+      "expected": {
+        "categoria": "stato_ordine",
+        "numero_ordine": "ORD-85720"
+      },
+      "nota": "",
+      "answers": {
+        "A": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-85720",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-85720",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-85720",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-85720",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-85720",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-12",
+      "text": "Ciao, avete idea di quando arriveranno i miei occhiali? Dovevano arrivare ieri ma non ho ricevuto nulla. Il tracking non cambia da 2 giorni. ORD85743",
+      "expected": {
+        "categoria": "stato_ordine",
+        "numero_ordine": "ORD-85743"
+      },
+      "nota": "Il numero è scritto senza trattino e va normalizzato; la richiesta riguarda consegna e tracking.",
+      "answers": {
+        "A": {
+          "categoria": "reso",
+          "numero_ordine": "ORD-85743",
+          "categoriaCorrect": false,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-85743",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-85743",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-85743",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-85743",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": true
+    },
+    {
+      "id": "test-13",
+      "text": "Oggetto: Consegna ordine\nGentili signori, desidererei cortesemente conoscere lo stato della spedizione relativa all'ordine n. ORD 29614. Ho ricevuto la conferma di acquisto il 12 settembre, per un totale di 89,90 euro, ma non ho ancora ricevuto il pacco. Potreste fornirmi il codice di tracciamento? Grazie.",
+      "expected": {
+        "categoria": "stato_ordine",
+        "numero_ordine": "ORD-29614"
+      },
+      "nota": "Email lunga con numeri aggiuntivi che non sono numeri d'ordine; la richiesta principale è lo stato della spedizione.",
+      "answers": {
+        "A": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-29614",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-29614",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-29614",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-29614",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-29614",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-14",
+      "text": "Ma è possibile che non sappiate dirmi dove sia finito il mio ordine??? Ho già aspettato abbastanza. Mi serve sapere quando arriva, non una spiegazione. Ordine ORD-54281.",
+      "expected": {
+        "categoria": "stato_ordine",
+        "numero_ordine": "ORD-54281"
+      },
+      "nota": "Tono molto arrabbiato, ma la richiesta è semplicemente conoscere la consegna dell'ordine.",
+      "answers": {
+        "A": {
+          "categoria": "altro",
+          "numero_ordine": "ORD-54281",
+          "categoriaCorrect": false,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-54281",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-54281",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-54281",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "stato_ordine",
+          "numero_ordine": "ORD-54281",
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": true
+    },
+    {
+      "id": "test-15",
+      "text": "Salve, il codice che ho ricevuto nella mail è ORD-764219. Potete controllare se la spedizione è partita? Ho paura di aver copiato male il numero.",
+      "expected": {
+        "categoria": "stato_ordine",
+        "numero_ordine": null
+      },
+      "nota": "La richiesta riguarda lo stato della spedizione, ma il presunto numero d'ordine contiene 6 cifre.",
+      "answers": {
+        "A": {
+          "categoria": "stato_ordine",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "invalid": "numero_ordine \"ORD-764219\" non è \"ORD-\" seguito da 5 cifre, né null",
+          "categoriaCorrect": false,
+          "numeroOrdineCorrect": false
+        },
+        "C1": {
+          "categoria": "stato_ordine",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "stato_ordine",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "stato_ordine",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": true
+    },
+    {
+      "id": "test-16",
+      "text": "Buongiorno, vorrei acquistare il modello Lumen ma non capisco quale misura scegliere. La mia montatura attuale misura 138 mm da un'estremità all'altra. Quali sono le misure del modello Lumen?",
+      "expected": {
+        "categoria": "info_prodotto",
+        "numero_ordine": null
+      },
+      "nota": "Il numero 138 è una misura e non va interpretato come numero d'ordine.",
+      "answers": {
+        "A": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-17",
+      "text": "Salve, è possibile ordinare gli occhiali da vista modello Prisma con lenti graduate? Mi interessano anche lenti fotocromatiche, se disponibili.",
+      "expected": {
+        "categoria": "info_prodotto",
+        "numero_ordine": null
+      },
+      "nota": "",
+      "answers": {
+        "A": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-18",
+      "text": "Ciao, gli occhiali Vega sono disponibili anche con una montatura più piccola? E sapete dirmi se le lenti sono in policarbonato o in altro materiale? Grazie!",
+      "expected": {
+        "categoria": "info_prodotto",
+        "numero_ordine": null
+      },
+      "nota": "Contiene due domande sul prodotto, entrambe precedenti all'acquisto.",
+      "answers": {
+        "A": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-19",
+      "text": "Buonasera, sto valutando l'acquisto degli occhiali Aurora. Ho visto che la larghezza è 142 mm, ma non trovo indicazioni sulla lunghezza delle aste. Potreste dirmi questo dato? Inoltre, avete un colore verde scuro?",
+      "expected": {
+        "categoria": "info_prodotto",
+        "numero_ordine": null
+      },
+      "nota": "Email con più domande e numeri tecnici che potrebbero sembrare identificativi, ma non c'è alcun numero d'ordine.",
+      "answers": {
+        "A": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": false,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": true
+    },
+    {
+      "id": "test-20",
+      "text": "Buongiorno, prima di comprare vorrei sapere se il modello Solis può montare lenti graduate e se è compatibile con una prescrizione di -3,50. Sul sito non trovo questa informazione.",
+      "expected": {
+        "categoria": "info_prodotto",
+        "numero_ordine": null
+      },
+      "nota": "Il valore -3,50 è una prescrizione, non un numero d'ordine.",
+      "answers": {
+        "A": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "info_prodotto",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-21",
+      "text": "Oggetto: Complimenti\nBuongiorno, volevo solo farvi i complimenti per il vostro sito. Ho acquistato da voi qualche mese fa e mi sono trovato molto bene. Continuate così!",
+      "expected": {
+        "categoria": "altro",
+        "numero_ordine": null
+      },
+      "nota": "Messaggio senza una richiesta di assistenza concreta.",
+      "answers": {
+        "A": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-22",
+      "text": "Salve, rappresento una piccola azienda che produce custodie artigianali e sarei interessato a proporvi una collaborazione commerciale. Possiamo fissare una breve chiamata per presentarvi i nostri prodotti?",
+      "expected": {
+        "categoria": "altro",
+        "numero_ordine": null
+      },
+      "nota": "È una proposta commerciale, non una richiesta relativa a resi, garanzia, ordine o caratteristiche del prodotto.",
+      "answers": {
+        "A": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-23",
+      "text": "Buongiorno, vorrei sapere come vengono trattati i dati personali raccolti durante la registrazione e per quanto tempo vengono conservati. Non ho trovato una risposta sufficientemente chiara nell'informativa.",
+      "expected": {
+        "categoria": "altro",
+        "numero_ordine": null
+      },
+      "nota": "La richiesta riguarda la privacy e non una delle categorie operative principali.",
+      "answers": {
+        "A": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-24",
+      "text": "Salve, mi chiamo Marco e vi scrivo perché sarei interessato a lavorare con voi. Ho esperienza nel settore e posso inviarvi il curriculum. Fatemi sapere se state cercando personale.",
+      "expected": {
+        "categoria": "altro",
+        "numero_ordine": null
+      },
+      "nota": "Candidatura di lavoro; il nome è un dato fittizio e non c'è una richiesta relativa a un ordine.",
+      "answers": {
+        "A": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": false
+    },
+    {
+      "id": "test-25",
+      "text": "Ciao, ho un dubbio enorme: sul sito vedo il codice promozionale 73164, il modello Nadir costa 129 euro e la consegna parla di 48 ore. Comunque complimenti per le foto del sito, sono bellissime. Ah, il numero che compare nella ricevuta è 123456, ma non so cosa rappresenti. Grazie!",
+      "expected": {
+        "categoria": "altro",
+        "numero_ordine": null
+      },
+      "nota": "Messaggio divagante senza una richiesta chiara; 73164, 129, 48 e 123456 sono altri numeri e nessuno è un numero d'ordine valido.",
+      "answers": {
+        "A": {
+          "categoria": "stato_ordine",
+          "numero_ordine": null,
+          "categoriaCorrect": false,
+          "numeroOrdineCorrect": true
+        },
+        "B1": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C1": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "B2": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        },
+        "C2": {
+          "categoria": "altro",
+          "numero_ordine": null,
+          "categoriaCorrect": true,
+          "numeroOrdineCorrect": true
+        }
+      },
+      "hasError": true
+    }
+  ]
+}
