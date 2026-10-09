@@ -1,0 +1,32 @@
+.tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 0;
+}
+
+.tabs-button {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  padding: var(--space-2) var(--space-1);
+  cursor: pointer;
+}
+
+.tabs-button:hover {
+  color: var(--color-text);
+}
+
+.tabs-button-active {
+  color: var(--color-text);
+  border-bottom-color: var(--color-accent);
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .tabs {
+    gap: var(--space-1);
+    overflow-x: auto;
+  }
+}

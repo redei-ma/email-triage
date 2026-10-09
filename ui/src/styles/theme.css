@@ -1,0 +1,44 @@
+/* Color tokens, light by default, dark via prefers-color-scheme. Every other
+   CSS file in this project reads colors only through these custom properties,
+   so the two themes never have to be kept in sync by hand. */
+
+:root {
+  --color-bg: #ffffff;
+  --color-bg-raised: #f4f5f7;
+  --color-text: #1b1d1f;
+  --color-text-muted: #5b6168;
+  --color-border: #d7dadd;
+  --color-accent: #2f5fb3;
+  --color-accent-contrast: #ffffff;
+  --color-focus: #0b57d0;
+
+  --color-correct: #1f7a3d;
+  --color-correct-bg: #e4f5e9;
+  --color-error: #a3271c;
+  --color-error-bg: #fbe7e4;
+
+  --radius: 6px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #15171a;
+    --color-bg-raised: #1f2226;
+    --color-text: #e7e9ea;
+    --color-text-muted: #a3a9b0;
+    --color-border: #34383e;
+    --color-accent: #7fa6e8;
+    --color-accent-contrast: #0c1320;
+    --color-focus: #8ab4ff;
+
+    --color-correct: #6fd895;
+    --color-correct-bg: #113023;
+    --color-error: #ff8c7d;
+    --color-error-bg: #3a1813;
+  }
+}

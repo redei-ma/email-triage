@@ -1,0 +1,57 @@
+/* Resets, typography and the few layout rules shared by the whole page.
+   Everything component-specific lives in its own CSS file. */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+/* A visible focus ring everywhere, instead of relying on each browser's
+   default (which some reset stylesheets remove by accident). */
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-3) var(--space-5);
+}
+
+code {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+}
+
+/* Visually hidden but readable by screen readers, for context sighted users
+   get from layout alone (e.g. a table's purpose, implied by its columns). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 480px) {
+  main {
+    padding: var(--space-3) var(--space-2) var(--space-4);
+  }
+}
