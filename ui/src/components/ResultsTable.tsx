@@ -25,7 +25,7 @@ export function ResultsTable({ data }: Props) {
               <th scope="col">Order number</th>
               <th scope="col">Both right</th>
               <th scope="col">Avg. time / email</th>
-              <th scope="col">Cost / 1,000 emails</th>
+              <th scope="col">Est. cost / 1,000 emails</th>
             </tr>
           </thead>
           <tbody>
