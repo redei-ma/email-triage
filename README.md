@@ -7,6 +7,10 @@ compares rules, a local model, a cloud model and hybrids of the two, all in
 TypeScript on Node, measured on a held-out test set that stayed closed until
 rules and prompt were frozen.
 
+The results and the test emails can be browsed at
+[redei-ma.github.io/email-triage](https://redei-ma.github.io/email-triage/),
+with a live demo of solution A, the keyword rules, running in the browser.
+
 ## In short
 
 Rules are the right tool for the order number, a mechanical pattern; a
@@ -214,6 +218,26 @@ stays busy or the daily quota runs out, that solution is skipped with a note.
 Each run writes its report to `runs/`; the official ones in `results/` are
 never overwritten.
 
+## Web interface
+
+`ui/` is a small React and TypeScript front end, built with Vite: the results
+table, the 25 test emails with each solution's answer and its errors
+highlighted, and a Try it tab where solution A classifies a pasted email in
+the browser, importing `src/rules.ts` directly. The models do not run there:
+they need a server.
+
+```bash
+cd ui
+npm ci
+npm run import   # optional: rewrites public/data/results.json from data/test/ and results/test-1.md
+npm run dev      # http://localhost:5173/email-triage/
+npm run build    # type-check and build into ui/dist/
+```
+
+`ui/public/data/results.json` is committed, so the interface runs without the
+import. Each push to `main` publishes `ui/` on GitHub Pages, through
+`.github/workflows/deploy-ui.yml`.
+
 ## Notes
 
 Tested on macOS (Apple Silicon) and Linux arm64, natively and in Docker;
@@ -232,4 +256,5 @@ src/classify.ts        validation and the single retry
 src/evaluate.ts        runs every solution and writes a report to runs/
 results/               the official reports quoted above
 compose.ollama.yaml    Ollama in a container, added only when needed
+ui/                    the web interface
 ```
