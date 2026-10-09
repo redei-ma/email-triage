@@ -1,10 +1,11 @@
 import "./Tabs.css";
 
-export type Tab = "results" | "emails";
+export type Tab = "results" | "emails" | "try-it";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "results", label: "Results" },
   { id: "emails", label: "Test emails" },
+  { id: "try-it", label: "Try it" },
 ];
 
 type Props = {

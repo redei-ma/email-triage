@@ -1,0 +1,28 @@
+.tryit-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: var(--space-3) 0;
+}
+
+.tryit-field textarea {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  resize: vertical;
+}
+
+.tryit-result {
+  background: var(--color-bg-raised);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  min-height: 3em;
+}
+
+.tryit-result-empty {
+  color: var(--color-text-muted);
+}

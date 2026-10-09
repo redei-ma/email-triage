@@ -3,6 +3,7 @@ import { useResultsData } from "./useResultsData.ts";
 import { Tabs, type Tab } from "./components/Tabs.tsx";
 import { ResultsTable } from "./components/ResultsTable.tsx";
 import { EmailsTab } from "./components/EmailsTab.tsx";
+import { TryIt } from "./components/TryIt.tsx";
 import "./App.css";
 
 export default function App() {
@@ -23,7 +24,9 @@ export default function App() {
         <Tabs active={tab} onChange={setTab} />
       </header>
       <main>
-        {resultsData.status === "loading" ? (
+        {tab === "try-it" ? (
+          <TryIt />
+        ) : resultsData.status === "loading" ? (
           <p>Loading results…</p>
         ) : resultsData.status === "error" ? (
           <p className="app-error" role="alert">
