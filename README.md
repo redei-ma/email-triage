@@ -191,7 +191,7 @@ checked by hand, since the labels, not the model, define correctness.
 
 ## Build and run
 
-Docker needs nothing else; Node needs Node 23.6 or later and, for the local
+Docker needs nothing else; Node needs Node 24 or later and, for the local
 model, [Ollama](https://ollama.com). The cloud model needs a free Gemini API
 key in `.env` (`cp .env.example .env`); without it B2 and C2 are skipped.
 
