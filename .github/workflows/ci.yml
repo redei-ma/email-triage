@@ -1,15 +1,15 @@
 name: CI
 
-# Checks every pull request and every push to main. The language models never
+# Checks every pull request, and every push to main as the first stage of
+# deploy-ui.yml, which publishes the UI built here. The language models never
 # run here: Ollama would need a 4.7 GB model on a CPU, and Gemini a key, its
 # daily quota and answers that change from run to run. What runs is what needs
 # neither: the type-check, the rules against their published results, the UI
 # and the Docker image.
 
 on:
-  push:
-    branches: [main]
   pull_request:
+  workflow_call:
 
 permissions:
   contents: read
@@ -49,6 +49,12 @@ jobs:
           git diff --exit-code public/data/results.json
       - run: npm ci
       - run: npm run build
+      # On main, the build checked here is the one deploy-ui.yml publishes:
+      # built once, not rebuilt for the deploy.
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: ui/dist
 
   docker:
     name: Docker image
