@@ -163,6 +163,9 @@ sure (the negation), so this would need a new test set before relying on it.
 - The emails were written by an LLM: new, so no model saw them in training,
   but likely easier for another LLM than real email. They also have few
   typos; a misspelled keyword ("rimborzo") defeats the rules, not a model.
+- The order number rule takes a dot or an abbreviation of "numero" after
+  "ord", not both: "ord. nr. 48213" is missed. No email of the dataset
+  writes it that way; found while writing the tests, after the freeze.
 - No test email carries two requests from different categories, and some
   resemble the development ones (same generator, same prompt).
 - The cloud model is a small free-tier one; a larger paid model was not
