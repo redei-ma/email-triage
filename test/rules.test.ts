@@ -1,6 +1,6 @@
 // Regression test: solution A must still give the results published in
 // results/dev.md and results/test-1.md. The rules are frozen (v1), so a change
-// that makes this fail also makes the README's numbers false;
+// that makes this fail also makes the README's numbers false.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
