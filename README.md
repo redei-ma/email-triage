@@ -163,6 +163,9 @@ sure (the negation), so this would need a new test set before relying on it.
 - The emails were written by an LLM: new, so no model saw them in training,
   but likely easier for another LLM than real email. They also have few
   typos; a misspelled keyword ("rimborzo") defeats the rules, not a model.
+- The order number rule takes a dot or an abbreviation of "numero" after
+  "ord", not both: "ord. nr. 48213" is missed. No email of the dataset
+  writes it that way; found while writing the tests, after the freeze.
 - No test email carries two requests from different categories, and some
   resemble the development ones (same generator, same prompt).
 - The cloud model is a small free-tier one; a larger paid model was not
@@ -188,7 +191,7 @@ checked by hand, since the labels, not the model, define correctness.
 
 ## Build and run
 
-Docker needs nothing else; Node needs Node 23.6 or later and, for the local
+Docker needs nothing else; Node needs Node 24 or later and, for the local
 model, [Ollama](https://ollama.com). The cloud model needs a free Gemini API
 key in `.env` (`cp .env.example .env`); without it B2 and C2 are skipped.
 
@@ -235,8 +238,34 @@ npm run build    # type-check and build into ui/dist/
 ```
 
 `ui/public/data/results.json` is committed, so the interface runs without the
-import. Each push to `main` publishes `ui/` on GitHub Pages, through
-`.github/workflows/deploy-ui.yml`.
+import. Each push to `main` publishes `ui/` on GitHub Pages once CI passes
+(see below).
+
+## Tests and CI
+
+```bash
+npm test         # node --test, no dependencies, no model, about a second
+npm run check    # tsc on src/ and test/
+```
+
+The tests run without a model, a network or a key:
+
+- **Regression**: the rules must give the published results, wrong on
+  exactly dev-02 and the five test emails listed in `results/test-1.md`. The
+  rules are frozen, so a change that fails this also makes the numbers above
+  false.
+- **Order number rule**: one case per decision, from the accepted spellings
+  to postcodes and promo codes, plus the known limit listed above.
+- **Answer validation and retry**: the check every model answer goes
+  through, and the single retry B and C share, driven by a fake model that
+  returns answers written in the test instead of Ollama or Gemini.
+
+`.github/workflows/ci.yml` runs on every pull request: type-check and tests,
+a check that `ui/public/data/results.json` matches what the import would
+write, the UI build and the Docker image. On `main`,
+`.github/workflows/deploy-ui.yml` runs the same CI and publishes the UI that
+CI built only if every check passes. The models never run in CI: Ollama would
+need a 4.7 GB model on a CPU, and Gemini a key and its daily quota.
 
 ## Notes
 
@@ -255,6 +284,8 @@ src/prompt.ts          the two tasks: full triage (B) and category only (C)
 src/classify.ts        validation and the single retry
 src/evaluate.ts        runs every solution and writes a report to runs/
 results/               the official reports quoted above
+test/                  the tests (npm test), no model needed
+.github/workflows/     CI on pull requests, CI then deploy on main
 compose.ollama.yaml    Ollama in a container, added only when needed
 ui/                    the web interface
 ```
